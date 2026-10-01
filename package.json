@@ -1,0 +1,50 @@
+{
+  "name": "@vatio-ai/sdk",
+  "version": "3.2.1",
+  "description": "Vatio JS SDK — talk to a Vatio agent from the browser",
+  "keywords": [
+    "vatio",
+    "agent",
+    "ai",
+    "chat",
+    "sdk"
+  ],
+  "homepage": "https://vatio.ai/docs#building-your-own-chat-ui",
+  "bugs": "https://github.com/vatio-ai/sdk/issues",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "author": "Vatio",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.txt"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vatio-ai/sdk"
+  }
+}

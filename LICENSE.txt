@@ -1,0 +1,16 @@
+Copyright (c) 2026 Urcalab. All rights reserved.
+
+This software (the "Vatio JS SDK") is distributed solely for the purpose
+of building on and interacting with the Vatio platform at
+https://vatio.ai and its APIs.
+
+Permission is granted to install and use the Vatio JS SDK as
+distributed, for that purpose. Redistribution, modification, reverse
+engineering, sublicensing, or any use of this software independent of
+the Vatio platform is not permitted without prior written permission
+from Urcalab.
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NONINFRINGEMENT.
