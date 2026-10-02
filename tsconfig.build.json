@@ -7,11 +7,10 @@
     "outDir": "dist"
   },
   "// include": [
-    "Both published entry points, and whatever they pull in -- internal.d.ts",
+    "The published entry point, and whatever it pulls in -- internal.d.ts",
     "comes along because index.d.ts imports from it."
   ],
   "include": [
-    "src/index.ts",
-    "src/inbox.ts"
+    "src/index.ts"
   ]
 }

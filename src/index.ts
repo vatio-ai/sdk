@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.2.1";
+const VERSION = "3.3.0";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -182,7 +182,7 @@ async function identifyChat(
 ): Promise<boolean> {
   try {
     const response = await fetch(
-      `${baseUrl}/api/public/v1/${encodeURIComponent(workspace)}/chats/${encodeURIComponent(stored.chat_id)}/identify`,
+      `${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/chats/${encodeURIComponent(stored.chat_id)}/identify`,
       {
         method: "POST",
         headers: { Authorization: `Bearer ${stored.chat_token}`, "Content-Type": "application/json" },
@@ -249,7 +249,7 @@ class Chat extends Emitter {
   }
 
   get url(): string {
-    return `${this.baseUrl}/api/public/v1/${encodeURIComponent(this.workspace)}`;
+    return `${this.baseUrl}/api/visitor/v1/${encodeURIComponent(this.workspace)}`;
   }
 
   // --- public surface ------------------------------------------------------
@@ -606,7 +606,7 @@ export const Vatio = {
    */
   async config({ workspace, token, baseUrl = DEFAULT_BASE_URL }: { workspace: string; token: string; baseUrl?: string }): Promise<VatioConfig> {
     requireOptions({ workspace, token });
-    const response = await fetch(`${baseUrl}/api/public/v1/${encodeURIComponent(workspace)}/config`, {
+    const response = await fetch(`${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/config`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!response.ok) throw await errorFrom(response);
@@ -721,7 +721,7 @@ export const Vatio = {
         writeStore(session, anonymousKey, null);
       }
     } else {
-      const response = await fetch(`${baseUrl}/api/public/v1/${encodeURIComponent(workspace)}/chats`, {
+      const response = await fetch(`${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/chats`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -814,7 +814,7 @@ export const Vatio = {
     if (!visitorRef) return [];
 
     const url =
-      `${baseUrl}/api/public/v1/${encodeURIComponent(workspace)}/chats` +
+      `${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/chats` +
       `?visitor_ref=${encodeURIComponent(visitorRef)}`;
     const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!response.ok) throw await errorFrom(response);

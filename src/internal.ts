@@ -196,9 +196,3 @@ export async function errorFrom(response: Response): Promise<VatioError> {
 
 export const DEFAULT_BASE_URL = "https://vatio.ai";
 
-// A browser, as far as this needs to know. Checked before anything is sent,
-// because the request that would teach you about the mistake is the one that
-// already put a workspace secret in a page.
-export function inBrowser(): boolean {
-  return typeof window !== "undefined" && typeof document !== "undefined";
-}
