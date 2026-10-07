@@ -1,6 +1,6 @@
 {
   "name": "@vatio-ai/sdk",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Vatio JS SDK — talk to a Vatio agent from the browser",
   "keywords": [
     "vatio",

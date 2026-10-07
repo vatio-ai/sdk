@@ -69,6 +69,8 @@ export type FeedbackRating = "good" | "neutral" | "bad";
 export interface VatioFeedback {
   agentName: string;
   messageId: number;
+  /** The agent's own words to ask with, written for this conversation; null when there are none. */
+  question: string | null;
   rating: FeedbackRating | null;
   submittedAt: string | null;
   dismissed: boolean;
@@ -77,6 +79,7 @@ export interface VatioFeedback {
 export interface WireFeedback {
   agent_name: string;
   message_id: number;
+  question?: string | null;
   rating: FeedbackRating | null;
   submitted_at: string | null;
   dismissed: boolean;
@@ -87,6 +90,7 @@ export function feedbackFrom(wire: WireFeedback | null | undefined): VatioFeedba
   return {
     agentName: wire.agent_name,
     messageId: wire.message_id,
+    question: wire.question ?? null,
     rating: wire.rating,
     submittedAt: wire.submitted_at,
     dismissed: wire.dismissed
