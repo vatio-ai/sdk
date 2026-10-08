@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.4.0";
+const VERSION = "3.5.0";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -593,6 +593,8 @@ export interface VatioChatOptions {
   scope?: string | null;
   visitorToken?: string | null;
   conversation?: VatioConversation | StoredChat | null;
+  /** @internal Set by Vatio's own widget, so the inbox shows its chats as Widget rather than Web. */
+  widget?: boolean;
 }
 
 export const Vatio = {
@@ -659,7 +661,8 @@ export const Vatio = {
     replyStyle = "stream",
     scope = null,
     visitorToken = null,
-    conversation = null
+    conversation = null,
+    widget = false
   }: VatioChatOptions): Promise<Chat> {
     requireOptions({ workspace, token });
 
@@ -727,7 +730,8 @@ export const Vatio = {
         body: JSON.stringify({
           visitor_ref: (local && readStore(local, refKey)) || undefined,
           reply_style: replyStyle,
-          visitor_token: visitorToken || undefined
+          visitor_token: visitorToken || undefined,
+          widget: widget || undefined
         })
       });
       if (!response.ok) throw await errorFrom(response);
