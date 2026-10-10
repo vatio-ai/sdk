@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.5.0";
+const VERSION = "3.5.1";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -820,7 +820,11 @@ export const Vatio = {
     const url =
       `${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/chats` +
       `?visitor_ref=${encodeURIComponent(visitorRef)}`;
-    const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    // A conversation this person had signed in is listed only alongside
+    // their token, in a header rather than the URL, where it would be logged.
+    const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+    if (visitorToken) headers["Vatio-Visitor-Token"] = visitorToken;
+    const response = await fetch(url, { headers });
     if (!response.ok) throw await errorFrom(response);
 
     const body: RailsListEnvelope<Record<string, any>> = await response.json();
