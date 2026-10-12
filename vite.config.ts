@@ -25,7 +25,7 @@ export default defineConfig({
     // own inbox panel, kept out of index.ts because widget.js bundles
     // whatever index.ts pulls in and is pasted into other people's pages,
     // where a supervisor API has no business being. The panel is gone -- the
-    // inbox is a site on its own origin and speaks to Api::Supervisor::V1
+    // inbox is a site on its own origin and speaks to Api::Inbox::V1
     // with a token -- so the file, the ./inbox export and the assertion in
     // sdk-publish.yml that policed the boundary all went with it (3.0.0).
     lib: {

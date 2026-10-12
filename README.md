@@ -32,8 +32,9 @@ No bundler? Any npm CDN serves the same module:
 
 `token` is a **publishable** token (`vatpub_…`). It is meant to be in your
 page source: it can start a conversation on one workspace and nothing else,
-and only from an origin you allowlisted under Settings → Widget. A `vat_`
-token is a developer secret and must never reach a browser.
+and only from an origin you allowlisted (`allowed_origins` in `vatio.yml`, or
+Channels → Widget in the inbox). A `vat_` token is a developer secret and must
+never reach a browser.
 
 Full reference: <https://vatio.ai/docs#building-your-own-chat-ui>.
 
@@ -42,7 +43,7 @@ Full reference: <https://vatio.ai/docs#building-your-own-chat-ui>.
 There used to be a second entry point: the client behind Vatio's own inbox
 panel, same-origin and authorized by a session cookie, useful only on a page
 Vatio served. The panel is gone — the inbox is a site of its own now
-(`inbox/`), on another origin, talking to `Api::Supervisor::V1` with a bearer
+(`inbox/`), on another origin, talking to `Api::Inbox::V1` with a bearer
 token it holds itself. So the client moved into that app, and this package
 went back to one entry point.
 
