@@ -7,6 +7,11 @@ You do not need this to put an agent on a page — that is the widget, one
 `<script>` tag, and it already contains this SDK. Reach for the SDK when you
 are building the interface yourself.
 
+Building your app with Claude Code, Cursor or Codex? Run `npx @vatio-ai/skills`
+in its project, then `/vatio-init` in Claude Code: your coding agent creates the
+agent from your app, and `/vatio-add-to-app` puts it in the app. See
+[vatio.ai](https://vatio.ai).
+
 ```sh
 npm install @vatio-ai/sdk
 ```
