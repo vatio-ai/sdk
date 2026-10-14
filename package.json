@@ -1,6 +1,6 @@
 {
   "name": "@vatio-ai/sdk",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "Vatio JS SDK — talk to a Vatio agent from the browser",
   "keywords": [
     "vatio",
@@ -9,7 +9,7 @@
     "chat",
     "sdk"
   ],
-  "homepage": "https://vatio.ai/docs#building-your-own-chat-ui",
+  "homepage": "https://vatio.ai/docs/sdk/",
   "bugs": "https://github.com/vatio-ai/sdk/issues",
   "license": "SEE LICENSE IN LICENSE.txt",
   "author": "Vatio",

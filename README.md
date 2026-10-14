@@ -32,11 +32,11 @@ No bundler? Any npm CDN serves the same module:
 
 `token` is a **publishable** token (`vatpub_…`). It is meant to be in your
 page source: it can start a conversation on one workspace and nothing else,
-and only from an origin you allowlisted (`allowed_origins` in `vatio.yml`, or
-Channels → Widget in the inbox). A `vat_` token is a developer secret and must
+and only from one of its allowed origins (`vatio tokens create --origin URL`,
+or the tokens section of **Channels → Web widget** in the inbox). A `vat_` token is a developer secret and must
 never reach a browser.
 
-Full reference: <https://vatio.ai/docs#building-your-own-chat-ui>.
+Full reference: <https://vatio.ai/docs/sdk/>.
 
 ## `@vatio-ai/sdk/inbox` is gone (3.0.0)
 
