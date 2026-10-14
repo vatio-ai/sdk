@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.5.3";
+const VERSION = "3.5.4";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -115,6 +115,14 @@ interface ChatOptions {
 // WebSocket upgrades, say). Polling is the fallback, never the default.
 const POLL_INTERVAL = 1500;
 const POLL_IDLE_TIMEOUT = 45000;
+
+// Nothing pushes the feedback moment without a socket either, so polling asks
+// for it, around the two times Vatio offers one after the agent speaks: a few
+// seconds later when the visitor closed the topic, two minutes later when they
+// went quiet. Every few seconds inside those windows (measured from when the
+// reply arrived), not on every poll.
+const FEEDBACK_CHECK_INTERVAL = 5000;
+const FEEDBACK_CHECK_WINDOWS: ReadonlyArray<readonly [number, number]> = [[0, 45000], [120000, 150000]];
 
 // `scope` separates two Vatio surfaces that share an origin but must not
 // share a conversation -- the live hosted page and the preview screen both sit
@@ -237,6 +245,10 @@ class Chat extends Emitter {
   private pollingUntil = 0;
   private pendingSubscription: Promise<void> | null = null;
   private currentFeedback: VatioFeedback | null = null;
+  // When the agent last said something new, for polling to look for the
+  // feedback moment after it; 0 once the visitor has written since.
+  private repliedAt = 0;
+  private feedbackCheckedAt = 0;
 
   constructor({ baseUrl, workspace, chatId, chatToken, visitorRef, environment }: ChatOptions) {
     super();
@@ -295,6 +307,7 @@ class Chat extends Emitter {
     // Writing again moves the conversation on, and an unanswered moment with
     // it: the server stops offering it, so stop showing it.
     if (this.currentFeedback && !this.currentFeedback.rating) this.setFeedback(null);
+    this.repliedAt = 0;
 
     // If we ended up on the polling fallback, a message just went out and a
     // reply is coming: poll attentively for a while, then go quiet again.
@@ -313,7 +326,9 @@ class Chat extends Emitter {
     const body: RailsListEnvelope<VatioMessage> = await response.json();
     const messages = body.data || [];
     messages.forEach((message) => {
-      if (message.id > this.lastMessageId) this.lastMessageId = message.id;
+      if (message.id <= this.lastMessageId) return;
+      this.lastMessageId = message.id;
+      if (message.role !== "user") this.repliedAt = Date.now();
     });
     return messages;
   }
@@ -488,6 +503,7 @@ class Chat extends Emitter {
       // already got). Dedupe on id so a caller never renders a bubble twice.
       if (message.id && message.id <= this.lastMessageId) return;
       if (message.id) this.lastMessageId = message.id;
+      if (message.role !== "user") this.repliedAt = Date.now();
       return this.emit("message", message);
     }
   }
@@ -508,12 +524,27 @@ class Chat extends Emitter {
     return feedback;
   }
 
-  private async refreshFeedback(): Promise<void> {
+  private async refreshFeedback(onlyIf: () => boolean = () => true): Promise<void> {
     try {
-      this.setFeedback(await this.feedback());
+      const feedback = await this.feedback();
+      if (onlyIf()) this.setFeedback(feedback);
     } catch (_) {
       /* feedback never interrupts the chat */
     }
+  }
+
+  // Polling's stand-in for the `feedback` event: see FEEDBACK_CHECK_WINDOWS.
+  private pollFeedback(): void {
+    const since = this.repliedAt;
+    const now = Date.now();
+    if (!since || this.subscribed || this.closed || this.currentFeedback) return;
+    if (now - this.feedbackCheckedAt < FEEDBACK_CHECK_INTERVAL) return;
+    if (!FEEDBACK_CHECK_WINDOWS.some(([from, to]) => now - since >= from && now - since <= to)) return;
+
+    this.feedbackCheckedAt = now;
+    // A send while this is out moves the conversation on, which makes what it
+    // finds stale.
+    this.refreshFeedback(() => this.repliedAt === since && !this.closed);
   }
 
   // Emits only on a change, so a reconnect that finds the same moment does
@@ -539,7 +570,9 @@ class Chat extends Emitter {
       (body.data || []).forEach((message) => {
         if (message.id <= this.lastMessageId) return;
         this.lastMessageId = message.id;
-        if (message.role !== "user") this.emit("message", message);
+        if (message.role === "user") return;
+        this.repliedAt = Date.now();
+        this.emit("message", message);
       });
     } catch (_) {
       /* offline; the next reconnect will try again */
@@ -557,6 +590,7 @@ class Chat extends Emitter {
     this.polling = setInterval(() => {
       if (this.closed || this.subscribed || Date.now() > this.pollingUntil) return this.stopPolling();
       this.resync();
+      this.pollFeedback();
     }, POLL_INTERVAL);
   }
 
