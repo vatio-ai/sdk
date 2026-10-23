@@ -35,11 +35,11 @@ No bundler? Any npm CDN serves the same module:
 </script>
 ```
 
-`token` is a **publishable** token (`vatpub_…`). It is meant to be in your
+`token` is a **publishable** key (`vatpub_…`). It is meant to be in your
 page source: it can start a conversation on one workspace and nothing else,
-and only from one of its allowed origins (`vatio tokens create --origin URL`,
-or the tokens section of **Channels → Web widget** in the inbox). A `vat_` token is a developer secret and must
-never reach a browser.
+and only from one of its allowed origins; how to create one is in
+<https://vatio.ai/docs/channels/widget>. A `vat_` token is a developer secret
+and must never reach a browser.
 
 Full reference: <https://vatio.ai/docs/sdk/>.
 

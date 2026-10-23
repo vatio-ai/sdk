@@ -23,9 +23,9 @@
  * expects -- see `replyStyle` on Vatio.chat for the channels where it doesn't,
  * and for how to ask for the bubble-split, human-paced shape instead.
  *
- * The token is a publishable token. It is *meant* to be in your page source:
+ * The token is a publishable key. It is *meant* to be in your page source:
  * it can start a conversation on one workspace and nothing else, only from the
- * origins that token allows (`vatio tokens create --origin`). Creating a chat returns a
+ * origins it allows (https://vatio.ai/docs/channels/widget). Creating a chat returns a
  * credential scoped to that one conversation, which this SDK stores and uses
  * for everything after — you never handle it.
  *
@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.5.4";
+const VERSION = "3.5.5";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
