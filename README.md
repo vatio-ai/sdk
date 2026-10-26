@@ -9,7 +9,7 @@ are building the interface yourself.
 
 Building your app with Claude Code, Cursor or Codex? Run `npx @vatio-ai/skills`
 in its project, then `/vatio-init` in Claude Code: your coding agent creates the
-agent from your app, and `/vatio-add-to-app` puts it in the app. See
+agent from your app; then ask it to put the agent in the app. See
 [vatio.ai](https://vatio.ai).
 
 ```sh
