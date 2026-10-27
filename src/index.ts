@@ -85,7 +85,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.5.5";
+const VERSION = "3.5.6";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -849,13 +849,14 @@ export const Vatio = {
     const local = typeof localStorage !== "undefined" ? localStorage : null;
     const identity = identityScope(scope, visitorToken);
     const visitorRef = local && readStore(local, storageKey(baseUrl, workspace, identity, "visitor"));
-    if (!visitorRef) return [];
+    if (!visitorRef && !visitorToken) return [];
 
     const url =
       `${baseUrl}/api/visitor/v1/${encodeURIComponent(workspace)}/chats` +
-      `?visitor_ref=${encodeURIComponent(visitorRef)}`;
-    // A conversation this person had signed in is listed only alongside
-    // their token, in a header rather than the URL, where it would be logged.
+      (visitorRef ? `?visitor_ref=${encodeURIComponent(visitorRef)}` : "");
+    // A conversation this person had signed in is listed by their token, and
+    // only alongside it -- in a header rather than the URL, where it would be
+    // logged. It needs no stored ref, so it works on any device.
     const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
     if (visitorToken) headers["Vatio-Visitor-Token"] = visitorToken;
     const response = await fetch(url, { headers });
