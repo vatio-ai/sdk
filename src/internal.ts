@@ -32,7 +32,19 @@ export interface VatioMessage {
   // a stand-in ("Image") and `content_is_media_label` is true: draw the file,
   // not the word.
   attachments?: VatioAttachment[];
+  // Links the agent's reply sends as buttons. `content` still has each one as
+  // the agent wrote it, for a client that draws none: to draw them, show
+  // textWithoutButtons(message) and a button per entry under it.
+  buttons?: VatioButton[];
   [key: string]: unknown;
+}
+
+// A link the reply sends as a button: `title` is what the button says, in the
+// visitor's language. `type` is "url" today; skip a type you do not know.
+export interface VatioButton {
+  type: "url" | (string & {});
+  title: string;
+  url?: string;
 }
 
 // A file on a message, as history and send() return it. `url` is absolute
@@ -200,3 +212,37 @@ export async function errorFrom(response: Response): Promise<VatioError> {
 
 export const DEFAULT_BASE_URL = "https://vatio.ai";
 
+
+const LEFTOVER = /^[\s\p{P}\p{S}]*$/u;
+
+// The message's content without the links its buttons carry, for the text
+// above the buttons. A link on a line of its own takes the line with it, one
+// inside a sentence leaves its words: how Vatio takes it out of a WhatsApp
+// message.
+export function textWithoutButtons(message: Pick<VatioMessage, "content" | "buttons">): string {
+  const content = message.content ?? "";
+  const urls = (message.buttons ?? [])
+    .filter((button) => button?.type === "url" && /^https?:\/\//i.test(button.url ?? ""))
+    .map((button) => button.url!);
+  return urls.length ? urls.reduce(withoutLink, content) : content;
+}
+
+function withoutLink(text: string, url: string): string {
+  const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const markdown = new RegExp("\\[([^\\]\\n]*)\\]\\(" + escaped + "\\)");
+  const lines = text.split("\n");
+  const index = lines.findIndex((line) => markdown.test(line) || line.includes(url));
+  if (index === -1) return text;
+
+  const line = lines[index]!;
+  let kept: string | null;
+  if (markdown.test(line)) {
+    kept = LEFTOVER.test(line.replace(markdown, "")) ? null : line.replace(markdown, (_whole, label: string) => label);
+  } else {
+    const rest = line.replace(new RegExp(escaped + "\\.?"), "");
+    kept = LEFTOVER.test(rest) ? null : rest;
+  }
+  if (kept === null) lines.splice(index, 1);
+  else lines[index] = kept;
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").replace(/[ \t]{2,}/g, " ").trim();
+}

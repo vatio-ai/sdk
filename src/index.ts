@@ -72,11 +72,12 @@ import {
   type VatioMessage
 } from "./internal";
 
-export { VatioError } from "./internal";
+export { VatioError, textWithoutButtons } from "./internal";
 export type {
   ChatStatus,
   FeedbackRating,
   VatioAttachment,
+  VatioButton,
   VatioMessageUpdate,
   VatioSendResult,
   VatioErrorOptions,
@@ -85,7 +86,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.5.6";
+const VERSION = "3.6.0";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
