@@ -72,7 +72,10 @@ import {
   type VatioMessage
 } from "./internal";
 
+import { rememberVisit, type VatioAttribution } from "./attribution";
+
 export { VatioError, textWithoutButtons } from "./internal";
+export type { VatioAttribution } from "./attribution";
 export type {
   ChatStatus,
   FeedbackRating,
@@ -86,7 +89,7 @@ export type {
   VatioMessage
 } from "./internal";
 
-const VERSION = "3.6.0";
+const VERSION = "3.7.0";
 
 // Checked here too, so a file the server would refuse is refused before it
 // is uploaded. The server stays the authority on the type: it reads the bytes.
@@ -628,6 +631,12 @@ export interface VatioChatOptions {
   scope?: string | null;
   visitorToken?: string | null;
   conversation?: VatioConversation | StoredChat | null;
+  /**
+   * Where the visit came from, sent when the conversation starts. Read from
+   * the page by default (see VatioAttribution); pass your own to say it
+   * yourself, or `false` to send none.
+   */
+  attribution?: VatioAttribution | false;
   /** @internal Set by Vatio's own widget, so the inbox shows its chats as Widget rather than Web. */
   widget?: boolean;
 }
@@ -687,6 +696,11 @@ export const Vatio = {
    * reopen an older one instead. It becomes the stored conversation, so the
    * page resumes into it from then on -- reopening is a choice the visitor
    * made, not a detour.
+   *
+   * A new conversation carries where the visit came from -- the landing
+   * page, the referring site, the utm_* and the ad click ids -- which the
+   * inbox and its Analytics show. `attribution` replaces what the SDK read
+   * from the page; `false` sends nothing.
    */
   async chat({
     workspace,
@@ -697,6 +711,7 @@ export const Vatio = {
     scope = null,
     visitorToken = null,
     conversation = null,
+    attribution,
     widget = false
   }: VatioChatOptions): Promise<Chat> {
     requireOptions({ workspace, token });
@@ -766,6 +781,7 @@ export const Vatio = {
           visitor_ref: (local && readStore(local, refKey)) || undefined,
           reply_style: replyStyle,
           visitor_token: visitorToken || undefined,
+          attribution: attribution === false ? undefined : (attribution ?? rememberVisit()) || undefined,
           widget: widget || undefined
         })
       });
