@@ -7,10 +7,11 @@ You do not need this to put an agent on a page — that is the widget, one
 `<script>` tag, and it already contains this SDK. Reach for the SDK when you
 are building the interface yourself.
 
-Building your app with Claude Code, Cursor or Codex? Run `npx @vatio-ai/skills`
-in its project, then `/vatio-init` in Claude Code: your coding agent creates the
-agent from your app; then ask it to put the agent in the app. See
-[vatio.ai](https://vatio.ai).
+The agent itself is built through the Vatio MCP, `https://vatio.ai/mcp`: in
+Claude Code, `claude mcp add --transport http vatio https://vatio.ai/mcp`, or
+`npx @vatio-ai/skills` in your project for the `vatio` skill, or any MCP
+client. Its `get_status` returns the publishable key this SDK takes. See
+<https://vatio.ai/docs/mcp>.
 
 ```sh
 npm install @vatio-ai/sdk
@@ -36,10 +37,10 @@ No bundler? Any npm CDN serves the same module:
 ```
 
 `token` is a **publishable** key (`vatpub_…`). It is meant to be in your
-page source: it can start a conversation on one workspace and nothing else,
-and only from one of its allowed origins; how to create one is in
-<https://vatio.ai/docs/channels/widget>. A `vat_` token is a developer secret
-and must never reach a browser.
+page source: it can start a conversation on one workspace and nothing else.
+It works from any site, `localhost` and production alike, with no list of
+allowed origins; see <https://vatio.ai/docs/channels/widget#publishable-keys>.
+A secret key (`vsk_…`) must never reach a browser.
 
 Full reference: <https://vatio.ai/docs/sdk/>.
 
